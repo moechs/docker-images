@@ -4,8 +4,9 @@ ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
     PS1='\u@\h:\w$ ' \
     JAVA_HOME=/usr/java/default \
-    APP_DIR=/data/app \
-    LOG_DIR=/data/logs \
+    APP_DIR=/app \
+    LOG_DIR=/app/logs \
+    DATA_DIR=/data \
     FAKETIME_DONT_FAKE_MONOTONIC=1 \
     FAKETIME_TIMESTAMP_FILE=/etc/faketime/faketimerc
 
@@ -30,6 +31,7 @@ RUN rpm -ivh https://repo.plus \
     && LD_PRELOAD=/usr/lib64/faketime/libfaketime.so.1 FAKETIME="+1d" date \
     && echo "+1d">/etc/faketime/faketimerc \
     && LD_PRELOAD=/usr/lib64/faketime/libfaketime.so.1 date \
+    && >/etc/faketime/faketimerc \
     && rm -rf /var/cache/yum/* /var/log/yum.log /tmp/*
 
 USER nobody
