@@ -1,13 +1,12 @@
-name: jdk8-docker-image
+name: jdk8
 
 on:
   push:
     branches:
     - main
     paths:
+    - .github/workflows/jdk8.yml
     - jdk8/**
-    paths-ignore:
-    - '**.md'
 
 env:
   CONTEXT_DIR: ./jdk8/
