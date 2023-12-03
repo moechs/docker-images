@@ -14,7 +14,8 @@ ENV PATH=/usr/java/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 RUN rpm -ivh https://repo.plus \
     && yum install epel-release -y \
     && yum update -y \
-    && yum install -y bash ca-certificates tzdata tzdata-java nc gzip curl wget tar less arthas libfaketime binutils freetype fontconfig jdk dejavu-sans-fonts chinese-fonts \
+    && yum install -y bash ca-certificates tzdata tzdata-java nc iproute net-tools tcpdump gzip curl wget tar less arthas libfaketime binutils freetype fontconfig jdk dejavu-sans-fonts chinese-fonts \
+    && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/java/default/jre/lib/security/cacerts \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && update-ca-trust \
