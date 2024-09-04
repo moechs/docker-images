@@ -1,4 +1,4 @@
-FROM centos:7
+FROM almalinux:9
 
 ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
@@ -12,15 +12,15 @@ ENV LANG=en_US.UTF-8 \
 
 ENV PATH=/usr/java/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-RUN rpm -ivh https://repo.plus \
-    && yum install epel-release -y \
-    && yum update -y \
-    && yum install -y bash ca-certificates tzdata tzdata-java nc iproute net-tools tcpdump \
-       bind-utils gzip curl wget tar less arthas libfaketime binutils freetype fontconfig \
-       dejavu-sans-fonts chinese-fonts jdk \
+RUN dnf install -y epel-release glibc-langpack-en \
+    && rpm -ivh https://repo.plus \
+    && dnf install -y vim ca-certificates tzdata tzdata-java \
+       iproute net-tools tcpdump bind-utils gzip wget tar less \
+       libfaketime binutils freetype fontconfig \
+       dejavu-sans-fonts chinese-fonts jdk arthas \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/java/default/jre/lib/security/cacerts \
-    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && update-ca-trust \
     && java -version \
     && mkdir -p /data /app/logs /etc/faketime \
@@ -32,7 +32,7 @@ RUN rpm -ivh https://repo.plus \
     && echo "+1d">/etc/faketime/faketimerc \
     && LD_PRELOAD=/usr/lib64/faketime/libfaketime.so.1 date \
     && >/etc/faketime/faketimerc \
-    && rm -rf /var/cache/yum/* /var/log/yum.log /tmp/*
+    && rm -rf /var/cache/dnf/* /var/log/dnf.* /tmp/*
 
 USER nobody
 
