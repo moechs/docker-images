@@ -1,8 +1,8 @@
 FROM alpine:3
 
-ARG BIRD_VERSION="2.15.1"
+ARG VERSION="2"
 
-RUN apk add --no-cache bird=~${BIRD_VERSION} \
+RUN apk add --no-cache bird=~${VERSION} \
     && mkdir -p /var/run/bird /etc/bird \
     && mv /etc/bird.conf /etc/bird/
 

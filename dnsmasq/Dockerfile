@@ -1,7 +1,7 @@
 FROM alpine:3
 
-ARG DNSMASQ_VERSION="2"
+ARG VERSION="2"
 
-RUN apk add --no-cache dnsmasq-dnssec=~${DNSMASQ_VERSION}
+RUN apk add --no-cache dnsmasq-dnssec=~${VERSION}
 
 CMD ["/usr/sbin/dnsmasq", "-k", "--log-facility=-"]
