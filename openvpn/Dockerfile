@@ -4,6 +4,8 @@ ARG VERSION="2"
 
 RUN apk add --no-cache openvpn=~${VERSION}
 
+COPY entrypoint.sh /entrypoint.sh
+
 WORKDIR /etc/openvpn
 
-CMD ["/usr/sbin/openvpn", "--suppress-timestamps", "--nobind", "--config", "client.conf"]
+CMD ["/entrypoint.sh"]
