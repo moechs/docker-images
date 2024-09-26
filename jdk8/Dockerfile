@@ -17,8 +17,9 @@ RUN dnf install -y epel-release glibc-langpack-en \
     && dnf install -y vim ca-certificates tzdata tzdata-java \
        iproute net-tools tcpdump bind-utils gzip wget tar less \
        libfaketime binutils freetype fontconfig \
-       dejavu-sans-fonts chinese-fonts jdk arthas \
+       dejavu-sans-fonts chinese-fonts jdk arthas procps-ng \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
+    && sed -e "s/#crypto.policy=unlimited/crypto.policy=unlimited/" -i /usr/java/default/jre/lib/security/java.security \
     && ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/java/default/jre/lib/security/cacerts \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && update-ca-trust \
