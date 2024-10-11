@@ -1,0 +1,8 @@
+[core]
+    editor = vim
+[init]
+    defaultBranch = main
+[http]
+    sslVerify = false
+[pull]
+    ff = only
