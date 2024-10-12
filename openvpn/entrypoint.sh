@@ -8,4 +8,4 @@ if [ ! -c /dev/net/tun ]; then
 fi
 
 cd /etc/openvpn && \
-exec openvpn ${OVPN_ARGS:---suppress-timestamps --nobind} --config ${OVPN_CONFIG:-client.conf}
+exec openvpn ${OVPN_ARGS:---suppress-timestamps} --config ${OVPN_CONFIG:-client.conf}
