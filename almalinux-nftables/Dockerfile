@@ -1,7 +1,7 @@
-FROM almalinux:9.4
+FROM almalinux:9.4-minimal
 
-RUN dnf --allowerasing -y install nftables \
-    && dnf clean all && rm -rf /var/log/* \
+RUN microdnf install --nodocs -y nftables \
+    && microdnf clean all && rm -rf /var/log/* \
     && >/etc/sysconfig/nftables.conf
 
 CMD ["/usr/sbin/nft", "-f", "/etc/sysconfig/nftables.conf"]
