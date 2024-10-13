@@ -7,7 +7,7 @@ RUN dnf -y install epel-release && /usr/bin/crb enable \
       iputils lsof mtr nmap-ncat net-tools nftables nmap openssh-clients \
       openssh-server openssl passwd procps rsyslog strace sudo \
       systemd-sysv systemd-udev tcpdump telnet traceroute tzdata \
-      util-linux vim-enhanced wget libxcrypt-compat which \
+      util-linux vim-enhanced wget libxcrypt-compat which git tig \
     && dnf upgrade -y && dnf clean all && rm -rf /var/log/* \
     && (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
       systemd-tmpfiles-setup.service ] || rm -f $i; done); \
