@@ -1,4 +1,8 @@
+FROM portainer/pause:3.9 as pause
+
 FROM almalinux:9.4
+
+COPY --from=pause /pause /
 
 RUN dnf -y install epel-release && /usr/bin/crb enable \
     && dnf --allowerasing -y install atop bash-completion bind-utils binutils \
