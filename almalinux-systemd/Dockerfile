@@ -1,15 +1,11 @@
-FROM portainer/pause:3.9 as pause
-
 FROM almalinux:9.4
-
-COPY --from=pause /pause /
 
 RUN dnf -y install epel-release && /usr/bin/crb enable \
     && dnf --allowerasing -y install atop bash-completion bind-utils binutils \
       ca-certificates cronie curl dstat dmidecode e2fsprogs ethtool file \
       glibc-langpack-en gnupg2 hostname initscripts iproute iptables-nft \
       iputils lsof mtr nmap-ncat net-tools nftables nmap openssh-clients \
-      openssh-server openssl passwd procps rsyslog strace sudo \
+      openssh-server openssl passwd procps rsyslog strace sudo dumb-init \
       systemd-sysv systemd-udev tcpdump telnet traceroute tzdata \
       util-linux vim-enhanced wget libxcrypt-compat which git tig \
     && dnf upgrade -y && dnf clean all && rm -rf /var/log/* \
