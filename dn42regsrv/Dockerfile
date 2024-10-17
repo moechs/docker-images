@@ -10,14 +10,14 @@ WORKDIR /source
 RUN go build -trimpath -ldflags "-w -s -X 'main.Version=${PROJECT_VERSION}'" -o /dn42regsrv
 
 
-FROM scratch
-ENV PATH=/
+FROM alpine/git
+ENV AUTHTOKEN="secret"
 WORKDIR /registry
 EXPOSE 8042
 COPY --from=source /source/StaticRoot /StaticRoot
 COPY --from=builder /dn42regsrv /dn42regsrv
-
-ENTRYPOINT ["/dn42regsrv", "-d", "/registry", "-s", "/StaticRoot"]
+RUN git config --global --add safe.directory /registry
+ENTRYPOINT ["/dn42regsrv", "-d", "/registry", "-s", "/StaticRoot", "-t", "${AUTHTOKEN}"]
 
 
 
