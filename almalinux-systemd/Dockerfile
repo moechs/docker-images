@@ -8,7 +8,7 @@ RUN dnf -y install epel-release && /usr/bin/crb enable \
       openssh-server openssl passwd procps rsyslog strace sudo dumb-init \
       systemd-sysv systemd-udev tcpdump telnet traceroute tzdata s-nail \
       util-linux vim-enhanced wget libxcrypt-compat which git tig jq \
-      ipcalc python3-pip \
+      ipcalc python3-pip inotify-tools \
     && pip3 install pip --upgrade \
     && pip3 install json2yaml \
     && dnf upgrade -y && dnf clean all && rm -rf /var/log/* ~/.cache/pip \
