@@ -1,4 +1,4 @@
-FROM almalinux:9.4
+FROM almalinux:9.5
 
 RUN dnf -y install epel-release && /usr/bin/crb enable \
     && dnf --allowerasing -y install atop bash-completion bind-utils binutils \
@@ -8,9 +8,9 @@ RUN dnf -y install epel-release && /usr/bin/crb enable \
       openssh-server openssl passwd procps rsyslog strace sudo dumb-init \
       systemd-sysv systemd-udev tcpdump telnet traceroute tzdata s-nail \
       util-linux vim-enhanced wget libxcrypt-compat which git tig jq \
-      ipcalc python3-pip inotify-tools coreutils-common rsync \
-    && pip3 install pip --upgrade \
-    && pip3 install json2yaml \
+      ipcalc python3.12-pip inotify-tools coreutils-common rsync \
+    && pip3.12 install pip --upgrade \
+    && pip3.12 install json2yaml \
     && dnf upgrade -y && dnf clean all && rm -rf /var/log/* ~/.cache/pip \
     && (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
       systemd-tmpfiles-setup.service ] || rm -f $i; done); \
