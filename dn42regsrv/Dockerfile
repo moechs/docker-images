@@ -1,4 +1,4 @@
-FROM alpine/git as source
+FROM alpine/git:2.45.2 as source
 RUN git clone https://github.com/moechs/dn42regsrv.git /source
 
 ARG PROJECT_VERSION=1.0.0
@@ -10,7 +10,7 @@ WORKDIR /source
 RUN go build -trimpath -ldflags "-w -s -X 'main.Version=${PROJECT_VERSION}'" -o /dn42regsrv
 
 
-FROM alpine/git
+FROM alpine/git:2.45.2
 WORKDIR /registry
 COPY --from=source /source/StaticRoot /StaticRoot
 COPY --from=builder /dn42regsrv /dn42regsrv
