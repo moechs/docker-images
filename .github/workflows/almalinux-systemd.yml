@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./almalinux-systemd/
   REGISTRY_IMAGE: moechs/almalinux-systemd
-  REGISTRY_IMAGE_TAG_PREFIX: "9.4"
+  REGISTRY_IMAGE_TAG_PREFIX: "9.5"
 
 jobs:
   build:
