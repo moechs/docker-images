@@ -24,7 +24,7 @@ RUN dnf install -y epel-release glibc-langpack-en \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && update-ca-trust \
     && java -version \
-    && mkdir -p /data /app/logs /etc/faketime \
+    && mkdir -p /data/logs /app/logs /etc/faketime \
     && touch /etc/faketime/faketimerc \
     && chown -R nobody.nobody /data /app /etc/faketime \
     && usermod -d /app nobody \
