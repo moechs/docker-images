@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./dnsmasq/
   REGISTRY_IMAGE: moechs/dnsmasq
-  REGISTRY_IMAGE_TAG_PREFIX: 2.90-r3
+  REGISTRY_IMAGE_TAG_PREFIX: 2.91-r0
 
 jobs:
   build:
