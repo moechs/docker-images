@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./openvpn/
   REGISTRY_IMAGE: moechs/openvpn
-  REGISTRY_IMAGE_TAG_PREFIX: 2.6.11-r0
+  REGISTRY_IMAGE_TAG_PREFIX: 2.6.14-r0
 
 jobs:
   build:

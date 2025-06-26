@@ -1,4 +1,4 @@
-FROM almalinux:9.5-minimal
+FROM almalinux:9.6-minimal
 
 RUN microdnf install --nodocs -y nftables \
     && microdnf clean all && rm -rf /var/log/* \

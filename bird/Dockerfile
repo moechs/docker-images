@@ -1,6 +1,6 @@
-FROM alpine:3.20
+FROM alpine:3.22
 
-ARG VERSION="2"
+ARG VERSION="3"
 
 RUN apk add --no-cache bird=~${VERSION} \
     && mkdir -p /var/run/bird /etc/bird \
