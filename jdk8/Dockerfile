@@ -16,7 +16,7 @@ RUN dnf install -y epel-release glibc-langpack-en \
     && rpm -ivh https://repo.plus \
     && dnf install -y vim ca-certificates tzdata tzdata-java \
        iproute net-tools tcpdump bind-utils gzip wget tar less \
-       libfaketime binutils freetype fontconfig \
+       libfaketime binutils freetype fontconfig wkhtmltox \
        dejavu-sans-fonts chinese-fonts jdk arthas procps-ng \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && sed -e "s/#crypto.policy=unlimited/crypto.policy=unlimited/" -i /usr/java/default/jre/lib/security/java.security \
