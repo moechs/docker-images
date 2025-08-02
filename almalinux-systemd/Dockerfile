@@ -30,7 +30,8 @@ RUN dnf -y install epel-release && /usr/bin/crb enable \
       systemctl set-default multi-user.target; \
       systemctl mask dev-hugepages.mount sys-fs-fuse-connections.mount \
         network.service systemd-journal-flush.service \
-        systemd-hostnamed.service systemd-timedated; \
+        systemd-hostnamed.service systemd-timedated \
+        network network-online network-pre systemd-network-generator; \
       systemctl unmask systemd-logind; \
       systemctl enable crond.service rsyslog.service sshd.service \
         systemd-sysctl.service systemd-user-sessions.service \
