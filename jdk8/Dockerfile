@@ -1,6 +1,7 @@
 FROM almalinux:9.6-20250803
 
 ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
     TZ=Asia/Shanghai \
     PS1='\u@\h:\w$ ' \
     JAVA_HOME=/usr/java/default \
@@ -12,35 +13,45 @@ ENV LANG=en_US.UTF-8 \
 
 ENV PATH=/usr/java/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-RUN dnf install -y epel-release glibc-langpack-en \
+
+COPY entrypoint.sh /entrypoint.sh
+
+RUN dnf update -y && \
+    dnf install -y epel-release glibc-langpack-en \
     && rpm -ivh https://repo.plus \
     && dnf install -y vim ca-certificates tzdata tzdata-java \
        iproute net-tools tcpdump bind-utils gzip wget tar less \
-       libfaketime binutils freetype fontconfig wkhtmltox \
-       dejavu-sans-fonts chinese-fonts jdk procps-ng \
+       libfaketime binutils freetype fontconfig wkhtmltox bc dumb-init \
+       dejavu-sans-fonts chinese-fonts procps-ng jdk arthas \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && sed -e "s/#crypto.policy=unlimited/crypto.policy=unlimited/" -i /usr/java/default/jre/lib/security/java.security \
     && ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/java/default/jre/lib/security/cacerts \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo $TZ > /etc/timezone \
+    && localedef -c -f UTF-8 -i en_US en_US.UTF-8 \
     && update-ca-trust \
-    && java -version \
-    && mkdir -p /data/logs /app/logs /etc/faketime \
+    && mkdir -p /data /app/logs /opt/spring /etc/faketime \
+    && ln -s /app/logs /data/logs \
+    && groupadd -r appuser \
+    && useradd -r -g appuser -d /app -s /bin/bash appuser \
     && touch /etc/faketime/faketimerc \
-    && chown -R nobody.nobody /data /app /etc/faketime \
-    && usermod -d /app nobody \
+    && chown -R appuser:appuser /data /app /opt/spring /etc/faketime \
+    && chmod +x /entrypoint.sh \
+    && chown appuser:appuser /entrypoint.sh \
     && date \
     && LD_PRELOAD=/usr/lib64/faketime/libfaketime.so.1 FAKETIME="+1d" date \
     && echo "+1d">/etc/faketime/faketimerc \
     && LD_PRELOAD=/usr/lib64/faketime/libfaketime.so.1 date \
     && >/etc/faketime/faketimerc \
-    && rm -rf /var/cache/dnf/* /var/log/dnf.* /tmp/*
+    && date \
+    && rm -rf /var/cache/dnf /var/log/dnf.* /tmp/* /var/tmp/*
 
-USER nobody
+USER appuser
 
 WORKDIR /app
 
 EXPOSE 8080
 
-ENTRYPOINT ["java"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
 
-CMD ["-version"]
+CMD ["-jar", "/app/app.jar"]
