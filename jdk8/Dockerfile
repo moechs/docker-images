@@ -38,9 +38,9 @@ RUN dnf update -y && \
     && chmod +x /entrypoint.sh \
     && chown appuser:appuser /entrypoint.sh \
     && date \
-    && FAKETIME="+1d" date \
+    && LD_PRELOAD=/usr/lib64/libfaketime.so.1 FAKETIME="-1d" date \
     && echo "+1d">/etc/faketime/faketimerc \
-    && date \
+    && LD_PRELOAD=/usr/lib64/libfaketime.so.1 date \
     && >/etc/faketime/faketimerc \
     && date \
     && rm -rf /var/cache/dnf /var/log/dnf.* /tmp/* /var/tmp/*
