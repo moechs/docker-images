@@ -17,7 +17,7 @@ ENV PATH=/usr/java/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 COPY entrypoint.sh /entrypoint.sh
 
 RUN dnf update -y && \
-    dnf install -y epel-release glibc-langpack-en \
+    dnf install -y epel-release glibc-langpack-en glibc-all-langpacks \
     && rpm -ivh https://repo.plus \
     && dnf install -y vim ca-certificates tzdata tzdata-java \
        iproute net-tools tcpdump bind-utils gzip wget tar less \
@@ -28,10 +28,9 @@ RUN dnf update -y && \
     && ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/java/default/jre/lib/security/cacerts \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo $TZ > /etc/timezone \
-    && localedef -c -f UTF-8 -i en_US en_US.UTF-8 \
     && update-ca-trust \
     && mkdir -p /data /app/logs /opt/spring /etc/faketime \
-    && ln -s /app/logs /data/logs \
+    && ln -sf /app/logs /data/logs \
     && groupadd -r appuser \
     && useradd -r -g appuser -d /app -s /bin/bash appuser \
     && touch /etc/faketime/faketimerc \
