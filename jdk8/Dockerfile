@@ -20,8 +20,9 @@ RUN dnf update -y && \
     dnf install -y epel-release glibc-langpack-en glibc-all-langpacks \
     && rpm -ivh https://repo.plus \
     && dnf install -y vim ca-certificates tzdata tzdata-java \
-       iproute net-tools tcpdump bind-utils gzip wget tar less \
+       iproute net-tools tcpdump bind-utils gzip unzip wget tar less \
        libfaketime binutils freetype fontconfig wkhtmltox bc dumb-init \
+       libpng libjpeg libX11 libXext libXrender xorg-x11-fonts-75dpi xorg-x11-fonts-Type1 \
        dejavu-sans-fonts chinese-fonts procps-ng jdk arthas \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && sed -e "s/#crypto.policy=unlimited/crypto.policy=unlimited/" -i /usr/java/default/jre/lib/security/java.security \
