@@ -53,4 +53,4 @@ EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
 
-CMD ["-jar", "/app/app.jar"]
+CMD ["-version"]
