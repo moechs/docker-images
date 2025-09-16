@@ -1,4 +1,4 @@
-FROM almalinux:9.6-20250803
+FROM almalinux:9.6-20250909
 
 ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
@@ -32,12 +32,12 @@ RUN dnf update -y && \
     && update-ca-trust \
     && mkdir -p /data /app/logs /opt/spring /etc/faketime \
     && ln -sf /app/logs /data/logs \
-    && groupadd -r appuser \
-    && useradd -r -g appuser -d /app -s /bin/bash appuser \
+    && groupadd -r -g 1000 app \
+    && useradd -r -u 1000 -g 1000 -d /app -s /bin/bash app \
     && touch /etc/faketime/faketimerc \
-    && chown -R appuser:appuser /data /app /opt/spring /etc/faketime \
+    && chown -R app:app /data /app /opt/spring /etc/faketime \
     && chmod +x /entrypoint.sh \
-    && chown appuser:appuser /entrypoint.sh \
+    && chown app:app /entrypoint.sh \
     && date \
     && LD_PRELOAD=/usr/lib64/libfaketime.so.1 FAKETIME="-1d" date \
     && echo "+1d">/etc/faketime/faketimerc \
@@ -46,7 +46,7 @@ RUN dnf update -y && \
     && date \
     && rm -rf /var/cache/dnf /var/log/dnf.* /tmp/* /var/tmp/*
 
-USER appuser
+USER app
 
 WORKDIR /app
 
