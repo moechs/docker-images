@@ -1,19 +1,22 @@
-ARG PGVECTOR_TAG=v0.8.0
-ARG PG_VERSION=14.8.0
-FROM bitnami/git:2.48.1 AS git
+ARG PGVECTOR_TAG=v0.8.1
+ARG PG_VERSION=17.6.0
+FROM bitnamilegacy/git:2.51.0 AS git
 
 ARG PGVECTOR_TAG
 WORKDIR /workspace
 RUN git clone https://github.com/pgvector/pgvector && cd pgvector && git checkout ${PGVECTOR_TAG}
 
 ARG PG_MAJOR
-FROM bitnami/postgresql:${PG_VERSION}
+FROM bitnamilegacy/postgresql:${PG_VERSION}
 
 USER root
 COPY --from=git /workspace/pgvector /tmp/pgvector
 RUN apt-get update && \
 		apt-mark hold locales && \
 		apt-get install -y --no-install-recommends build-essential && \
+    deluser postgres && \
+    groupadd -g 1001 postgres && \
+    useradd -u 1001 -g 1001 -m -s /bin/bash postgres && \
 		cd /tmp/pgvector && \
 		make clean && \
 		make OPTFLAGS="" && \
@@ -27,4 +30,4 @@ RUN apt-get update && \
 		apt-mark unhold locales && \
 		rm -rf /var/lib/apt/lists/*
 
-USER 1001
+USER postgres

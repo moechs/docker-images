@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./bitnami-postgresql-pgvector/
   REGISTRY_IMAGE: moechs/bitnami-postgresql-pgvector
-  REGISTRY_IMAGE_TAG_PREFIX: 14.8.0
+  REGISTRY_IMAGE_TAG_PREFIX: 17.6.0
 
 jobs:
   build:
