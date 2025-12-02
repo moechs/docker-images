@@ -1,4 +1,4 @@
-FROM almalinux:9.6
+FROM almalinux:9.7
 
 RUN dnf -y install epel-release && /usr/bin/crb enable \
     && dnf --allowerasing -y install atop bash-completion bind-utils binutils \
