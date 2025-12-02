@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./bird/
   REGISTRY_IMAGE: moechs/bird
-  REGISTRY_IMAGE_TAG_PREFIX: 2.15.1
+  REGISTRY_IMAGE_TAG_PREFIX: 2.17.2
 
 jobs:
   build:
