@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./nginx-auth-ldap/
   REGISTRY_IMAGE: moechs/nginx-auth-ldap
-  REGISTRY_IMAGE_TAG_PREFIX: 1.28.0
+  REGISTRY_IMAGE_TAG_PREFIX: 1.29.4
 
 jobs:
   build:
