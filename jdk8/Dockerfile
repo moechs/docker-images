@@ -1,4 +1,4 @@
-FROM almalinux:9.7-20251125
+FROM almalinux:9.7-20260104
 
 ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
