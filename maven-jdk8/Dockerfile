@@ -1,4 +1,4 @@
-FROM moechs/jdk:8u202-20251202
+FROM moechs/jdk:8u202-20260111
 
 ENV MAVEN_HOME=/usr/local/maven
 ENV PATH=/usr/local/maven/bin:/usr/java/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
