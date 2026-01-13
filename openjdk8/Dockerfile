@@ -50,5 +50,3 @@ USER app
 WORKDIR /app
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
-
-CMD ["-version"]
