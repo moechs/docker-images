@@ -11,7 +11,7 @@ RUN dnf -y install epel-release \
 
 RUN dnf --allowerasing -y install \
       cronie rsyslog openssh-server logrotate \
-      initscripts passwd sudo \
+      initscripts passwd sudo dumb-init \
       bind-utils iproute iputils net-tools nmap-ncat mtr traceroute \
       iptables-nft nftables tcpdump telnet curl wget \
       atop dstat procps lsof strace ethtool dmidecode \
