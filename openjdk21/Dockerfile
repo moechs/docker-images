@@ -23,7 +23,7 @@ RUN dnf update -y && \
        iproute net-tools tcpdump bind-utils gzip unzip wget tar less \
        libfaketime binutils freetype fontconfig wkhtmltox bc dumb-init \
        libpng libjpeg libX11 libXext libXrender xorg-x11-fonts-75dpi xorg-x11-fonts-Type1 \
-       java-1.8.0-openjdk java-1.8.0-openjdk-devel java-1.8.0-openjdk-headless \
+       java-21-openjdk java-21-openjdk-devel java-21-openjdk-headless \
        dejavu-sans-fonts chinese-fonts procps-ng arthas \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
