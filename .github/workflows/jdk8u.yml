@@ -1,11 +1,11 @@
-name: jdk-1.8
+name: jdk8u
 
 on:
   push:
     branches:
     - main
     paths:
-    - .github/workflows/jdk-1.8.yml
+    - .github/workflows/jdk8u.yml
     - jdk-1.8/**
 
 env:
