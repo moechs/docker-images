@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./maven-jdk8/
   REGISTRY_IMAGE: moechs/maven-jdk8
-  REGISTRY_IMAGE_TAG_PREFIX: 3.9.11
+  REGISTRY_IMAGE_TAG_PREFIX: 3.9.12
 
 jobs:
   build:
