@@ -205,7 +205,6 @@ generate_jvm_args() {
         
         if [ -d "/app/logs" ] && [ -w "/app/logs" ]; then
             AUTO_JVM_ARGS="$AUTO_JVM_ARGS -XX:+PrintGCDetails -XX:+PrintGCDateStamps"
-            AUTO_JVM_ARGS="$AUTO_JVM_ARGS -XX:+PrintGCApplicationStoppedTime"
             AUTO_JVM_ARGS="$AUTO_JVM_ARGS -Xloggc:/app/logs/gc.log"
             AUTO_JVM_ARGS="$AUTO_JVM_ARGS -XX:+UseGCLogFileRotation"
             AUTO_JVM_ARGS="$AUTO_JVM_ARGS -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=10M"
