@@ -1,4 +1,4 @@
-FROM almalinux:9.7-minimal-20260104
+FROM almalinux:9.7-minimal-20260129
 
 RUN microdnf install --nodocs -y --setopt=install_weak_deps=0 epel-release \
     && microdnf install --nodocs -y ndppd \
