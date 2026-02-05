@@ -1,7 +1,6 @@
 FROM almalinux:9.7-20260129
 
 ENV LANG=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8 \
     TZ=Asia/Shanghai \
     PS1='\u@\h:\w$ ' \
     JAVA_HOME=/usr/lib/jvm/java \
@@ -24,10 +23,11 @@ RUN dnf update -y && \
        libfaketime binutils freetype fontconfig wkhtmltox bc dumb-init \
        libpng libjpeg libX11 libXext libXrender xorg-x11-fonts-75dpi xorg-x11-fonts-Type1 \
        java-21-openjdk java-21-openjdk-devel java-21-openjdk-headless \
-       dejavu-sans-fonts chinese-fonts procps-ng arthas \
+       dejavu-sans-fonts chinese-fonts procps-ng arthas wireshark-cli \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo $TZ > /etc/timezone \
+    && echo "LANG=en_US.UTF-8" >/etc/locale.conf \
     && update-ca-trust \
     && mkdir -p /data /app/logs /opt/spring /etc/faketime \
     && ln -sf /app/logs /data/logs \
