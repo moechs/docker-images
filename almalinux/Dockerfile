@@ -13,7 +13,7 @@ RUN dnf -y install epel-release \
     && rm -rf /var/cache/dnf /var/log/* /tmp/* /var/tmp/* ~/.cache/*
 
 RUN dnf install -y epel-release \
-    && dnf --allowerasing -y bash curl vim ca-certificates tzdata \
+    && dnf install --allowerasing -y bash curl vim ca-certificates tzdata \
     iproute net-tools tcpdump bind-utils gzip unzip wget tar less \
     strace lsof tree binutils bc jq file procps-ng wireshark-cli dumb-init \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
