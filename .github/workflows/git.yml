@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./git/
   REGISTRY_IMAGE: moechs/git
-  REGISTRY_IMAGE_TAG_PREFIX: v2.49.1
+  REGISTRY_IMAGE_TAG_PREFIX: v2.52.0
 
 jobs:
   build:
