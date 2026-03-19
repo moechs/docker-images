@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./openjdk8/
   REGISTRY_IMAGE: moechs/openjdk
-  REGISTRY_IMAGE_TAG_PREFIX: 8u472
+  REGISTRY_IMAGE_TAG_PREFIX: 8u482
 
 jobs:
   build:

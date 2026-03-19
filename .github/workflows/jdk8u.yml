@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./jdk-1.8/
   REGISTRY_IMAGE: moechs/jdk
-  REGISTRY_IMAGE_TAG_PREFIX: 8u471
+  REGISTRY_IMAGE_TAG_PREFIX: 8u481
 
 jobs:
   build:
