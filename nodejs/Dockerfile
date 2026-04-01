@@ -9,6 +9,11 @@ RUN apt-get update \
     && corepack enable \
     && corepack prepare npm@latest --activate \
     && corepack prepare pnpm@latest --activate \
-    && corepack prepare yarn@stable --activate
+    && corepack prepare yarn@stable --activate \
+    && mkdir -p /data /app/logs \
+    && ln -sf /app/logs /data/logs \
+    && chown -R node:node /data /app
+
+WORKDIR /app
 
 USER node
