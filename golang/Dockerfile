@@ -7,7 +7,7 @@ RUN apt-get update \
         dumb-init \
         ca-certificates \
     && groupadd --gid 1000 go \
-    && useradd --uid 1000 --gid go --shell /bin/bash --home-dir /go --no-create-home go \
+    && useradd --uid 1000 --gid go --shell /bin/bash --create-home go \
     && mkdir -p /data /app/logs \
     && ln -sf /app/logs /data/logs \
     && chown -R go:go /go /data /app
