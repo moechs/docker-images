@@ -6,3 +6,7 @@ RUN apk add --no-cache bash curl wget sed gawk jq yq tar unzip dumb-init \
     && mkdir -p /data /app/logs \
     && ln -sf /app/logs /data/logs \
     && chown -R git:git /data /app 
+
+WORKDIR /app
+
+USER git
