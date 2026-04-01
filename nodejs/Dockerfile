@@ -1,5 +1,14 @@
-FROM node:24.13.1
+FROM node:24.14.1
 
-RUN corepack enable && \
-    corepack prepare pnpm@latest --activate && \
-    corepack prepare yarn@stable --activate
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bash \
+        curl \
+        dumb-init \
+        ca-certificates \
+    && corepack enable \
+    && corepack prepare npm@latest --activate \
+    && corepack prepare pnpm@latest --activate \
+    && corepack prepare yarn@stable --activate
+
+USER node

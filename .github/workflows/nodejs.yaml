@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./nodejs/
   REGISTRY_IMAGE: moechs/node
-  REGISTRY_IMAGE_TAG_PREFIX: 24.13.1
+  REGISTRY_IMAGE_TAG_PREFIX: 24.14.1
 
 jobs:
   build:
