@@ -1,4 +1,4 @@
-FROM almalinux:9.7-20260330
+FROM almalinux:9.7-20260407
 
 ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
@@ -15,6 +15,7 @@ RUN dnf install --allowerasing -y bash curl vim ca-certificates tzdata \
     && mkdir -p /data /app/ \
     && groupadd -r -g 1000 app \
     && useradd -r -u 1000 -g 1000 -d /app -s /bin/bash app \
+    && usermod -a -G wireshark app \
     && chown -R app:app /data /app \
     && dnf clean all \
     && rm -rf /var/cache/dnf /var/log/* /tmp/* /var/tmp/* ~/.cache/*
