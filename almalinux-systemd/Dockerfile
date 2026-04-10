@@ -1,4 +1,4 @@
-FROM almalinux/9-init:9.7-20260330
+FROM almalinux/9-init:9.7-20260407
 
 ADD rootfs/ /
 
