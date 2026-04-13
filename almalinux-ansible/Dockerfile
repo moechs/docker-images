@@ -14,6 +14,7 @@ RUN dnf -y install epel-release \
 
 RUN dnf install --allowerasing -y bash curl wget ca-certificates tzdata \
     dumb-init openssh openssh-clients sshpass rsync ansible python3-passlib \
+    glibc-langpack-en \
     && echo $TZ > /etc/timezone \
     && echo "LANG=en_US.UTF-8" >/etc/locale.conf \
     && dnf clean all \
