@@ -3,7 +3,7 @@ FROM almalinux/9-init:9.7-20260407
 ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
     container=docker \
-    PS1='\u@\h:\w$ '
+    PS1='\u@\h:\w# '
 
 RUN dnf -y install epel-release \
     && /usr/bin/crb enable \
