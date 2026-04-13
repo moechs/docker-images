@@ -20,3 +20,7 @@ RUN dnf install --allowerasing -y bash curl wget ca-certificates tzdata \
     && rm -rf /var/cache/dnf /var/log/* /tmp/* /var/tmp/* ~/.cache/*
 
 ADD rootfs/ /
+
+ENTRYPOINT []
+
+CMD ["ansible", "--help"]
