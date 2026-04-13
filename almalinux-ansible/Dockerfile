@@ -12,7 +12,8 @@ RUN dnf -y install epel-release \
     && dnf clean all \
     && rm -rf /var/cache/dnf /var/log/* /tmp/* /var/tmp/* ~/.cache/*
 
-RUN dnf install --allowerasing -y ansible \
+RUN dnf install --allowerasing -y bash curl wget ca-certificates tzdata \
+    dumb-init openssh openssh-clients sshpass rsync ansible python3-passlib \
     && echo $TZ > /etc/timezone \
     && echo "LANG=en_US.UTF-8" >/etc/locale.conf \
     && dnf clean all \
