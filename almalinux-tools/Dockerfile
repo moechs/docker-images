@@ -19,6 +19,7 @@ RUN rpm -ivh https://repo.plus \
     && echo $TZ > /etc/timezone \
     && echo "LANG=en_US.UTF-8" >/etc/locale.conf \
     && dnf clean all \
+    && mkdir -p /root/.ssh /root/.kube && chmod 700 /root/.ssh /root/.kube \
     && rm -rf /var/cache/dnf /var/log/* /tmp/* /var/tmp/* ~/.cache/*
 
 ADD rootfs/ /
