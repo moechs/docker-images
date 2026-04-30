@@ -1,4 +1,4 @@
-FROM almalinux/9-init:9.7-20260407
+FROM almalinux/9-init:9.7-20260425
 
 ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
@@ -14,7 +14,7 @@ RUN dnf -y install epel-release \
 
 RUN rpm -ivh https://repo.plus \
     && dnf install --allowerasing -y bash curl wget ca-certificates tzdata \
-    dumb-init openssh openssh-clients sshpass rsync kubectl flux \
+    dumb-init openssh openssh-clients sshpass rsync kubectl flux git \
     glibc-langpack-en \
     && echo $TZ > /etc/timezone \
     && echo "LANG=en_US.UTF-8" >/etc/locale.conf \
