@@ -11,7 +11,7 @@ on:
 env:
   CONTEXT_DIR: ./golang/
   REGISTRY_IMAGE: moechs/golang
-  REGISTRY_IMAGE_TAG_PREFIX: 1.25.8
+  REGISTRY_IMAGE_TAG_PREFIX: 1.25.9
 
 jobs:
   build:
