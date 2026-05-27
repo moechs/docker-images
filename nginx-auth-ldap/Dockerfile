@@ -1,6 +1,6 @@
-FROM alpine:3.22
+FROM alpine:3.23
 
-ENV NGINX_VERSION=1.29.7 TZ=Asia/Shanghai
+ENV NGINX_VERSION=1.30.2 TZ=Asia/Shanghai
 
 RUN cd /tmp && apk add --no-cache --virtual .build-deps \
   build-base git libtool wget tar \
