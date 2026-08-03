@@ -1,4 +1,4 @@
-FROM alpine/git:v2.52.0
+FROM alpine/git:v2.54.0
 
 RUN apk add --no-cache bash curl wget sed gawk jq yq tar unzip dumb-init \
     && addgroup -g 1000 git \
