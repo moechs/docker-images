@@ -1,4 +1,4 @@
-FROM alpine:3.22
+FROM alpine:3.24.1
 
 RUN apk add --no-cache bird2 \
     && mkdir -p /var/run/bird /etc/bird \
