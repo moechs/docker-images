@@ -1,3 +1,3 @@
-FROM moechs/jdk:8u202-20260607
+FROM moechs/jdk:8u202-20260905
 
 USER root
