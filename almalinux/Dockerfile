@@ -1,4 +1,4 @@
-FROM almalinux:9.8-20260902
+FROM almalinux:9.8-20261002
 
 ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
