@@ -6,13 +6,18 @@ RUN apt-get update \
         curl \
         dumb-init \
         ca-certificates \
+    && npm install --global \
+        npm@latest \
+        corepack@latest \
     && corepack enable \
-    && corepack prepare npm@latest --activate \
-    && corepack prepare pnpm@latest --activate \
-    && corepack prepare yarn@stable --activate \
-    && mkdir -p /data /app/logs \
-    && ln -sf /app/logs /data/logs \
-    && chown -R node:node /data /app
+    && corepack install --global \
+        pnpm@latest \
+        yarn@stable \
+    && install -d -o node -g node \
+        /data \
+        /app/logs \
+    && ln -s /app/logs /data/logs \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

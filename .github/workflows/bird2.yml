@@ -9,7 +9,7 @@ on:
     - bird2/**
 
 env:
-  CONTEXT_DIR: ./bird/
+  CONTEXT_DIR: ./bird2/
   REGISTRY_IMAGE: moechs/bird
   REGISTRY_IMAGE_TAG_PREFIX: 2.19.3
 
