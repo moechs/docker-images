@@ -1,13 +1,13 @@
-ARG PGVECTOR_TAG=v0.8.1
-ARG PG_VERSION=17.6.0
-FROM bitnamilegacy/git:2.51.0 AS git
+ARG PGVECTOR_TAG=master
+ARG PG_VERSION=18.7.0-debian-12-r0
+FROM alpine/git:latest AS git
 
 ARG PGVECTOR_TAG
 WORKDIR /workspace
-RUN git clone https://github.com/pgvector/pgvector && cd pgvector && git checkout ${PGVECTOR_TAG}
+RUN git clone --branch ${PGVECTOR_TAG} https://github.com/pgvector/pgvector.git
 
-ARG PG_MAJOR
-FROM bitnamilegacy/postgresql:${PG_VERSION}
+ARG PG_VERSION
+FROM moechs/bitnami-postgresql:${PG_VERSION}
 
 USER root
 COPY --from=git /workspace/pgvector /tmp/pgvector
