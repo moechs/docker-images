@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/maven-jdk8
+ARG IMAGE_VERSION=3.10.1
+
 FROM moechs/jdk:8u511-20261117
 
 ENV MAVEN_HOME=/usr/local/maven

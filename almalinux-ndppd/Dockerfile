@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/almalinux-ndppd
+ARG IMAGE_VERSION=0.2.5
+
 FROM almalinux:9.9-minimal-20261116
 
 RUN microdnf install --nodocs -y --setopt=install_weak_deps=0 epel-release \

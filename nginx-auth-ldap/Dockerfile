@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/nginx-auth-ldap
+ARG IMAGE_VERSION=1.31.8
+
 FROM alpine:3.24.3
 
 ENV NGINX_VERSION=1.31.8 TZ=Asia/Shanghai

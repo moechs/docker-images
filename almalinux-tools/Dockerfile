@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/almalinux-tools
+ARG IMAGE_VERSION=1.1.2
+
 FROM almalinux/9-init:9.9-20261116
 
 ENV LANG=en_US.UTF-8 \

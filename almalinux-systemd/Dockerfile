@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/almalinux-systemd
+ARG IMAGE_VERSION=9.9
+
 FROM almalinux/9-init:9.9-20261116
 
 ADD rootfs/ /

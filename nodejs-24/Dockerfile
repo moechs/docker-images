@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/node
+ARG IMAGE_VERSION=24.22.3
+
 FROM node:24.22.3
 
 RUN apt-get update \

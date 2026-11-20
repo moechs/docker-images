@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/openvpn
+ARG IMAGE_VERSION=2.7.7-r0
+
 FROM alpine:3.24.4
 
 ARG VERSION="2"

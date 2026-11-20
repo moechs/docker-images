@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/bitnami-postgresql-pgvector
+ARG IMAGE_VERSION=18.7.0
+
 ARG PGVECTOR_TAG=master
 ARG PG_VERSION=18.7.0-debian-12-r0
 FROM alpine/git:latest AS git

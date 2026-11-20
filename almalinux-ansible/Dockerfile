@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/almalinux-ansible
+ARG IMAGE_VERSION=7.7.0
+
 FROM almalinux/9-init:9.9-20261116
 
 ENV LANG=en_US.UTF-8 \

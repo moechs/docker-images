@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/dn42regsrv
+ARG IMAGE_VERSION=1.0.1
+
 FROM alpine/git:2.54.1 as source
 RUN git clone https://github.com/moechs/dn42regsrv.git /source
 

@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/jdk
+ARG IMAGE_VERSION=8u202
+
 FROM almalinux:9.9-20261116
 
 ENV LANG=en_US.UTF-8 \

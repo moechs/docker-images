@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/bird
+ARG IMAGE_VERSION=2.19.3
+
 FROM alpine:3.24.4
 
 RUN apk add --no-cache bird2 \

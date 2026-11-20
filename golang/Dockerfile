@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/golang
+ARG IMAGE_VERSION=1.27.4
+
 FROM golang:1.27.4-trixie
 
 RUN apt-get update \

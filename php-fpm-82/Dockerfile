@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/php-fpm
+ARG IMAGE_VERSION=8.2.35
+
 FROM frugan/php:8.2.35-fpm
 
 COPY php/conf.d/ /usr/local/etc/php/conf.d/
