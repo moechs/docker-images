@@ -167,7 +167,7 @@ def collect_refs() -> tuple[list[Ref], list[str]]:
         for match in FROM_RE.finditer(text):
             ref = match.group("ref")
             if "$" in ref:  # variable-based image, cannot resolve statically
-                issues.append(f"{path.name}: 跳过变量镜像 {ref}")
+                issues.append(f"{path.name}: skipped variable-based image {ref}")
                 continue
             image, sep, tag = ref.partition(":")
             refs.append(
@@ -183,10 +183,10 @@ def main() -> int:
     targets: dict[str, list[Ref]] = {}
     for ref in refs:
         if ref.tag is None or not numbers(ref.tag):
-            issues.append(f"{ref.path.parent.name}: 未固定版本（{ref.old}），无法比较")
+            issues.append(f"{ref.path.parent.name}: unpinned version ({ref.old}), cannot compare")
             continue
         if ref.image.startswith(SELF_PREFIX) and not args.include_self:
-            issues.append(f"{ref.path.parent.name}: 跳过自维护镜像 {ref.old}")
+            issues.append(f"{ref.path.parent.name}: skipped self-managed image {ref.old}")
             continue
         repo = resolve_repo(ref.image)
         targets.setdefault(repo, []).append(ref)
@@ -200,7 +200,7 @@ def main() -> int:
                 tag_cache[repo] = future.result()
             except (urllib.error.URLError, TimeoutError, KeyError, ValueError) as exc:
                 tag_cache[repo] = None
-                issues.append(f"查询 {repo} 失败：{exc}")
+                issues.append(f"failed to query {repo}: {exc}")
 
     updates: list[dict] = []
     for repo, group in targets.items():
@@ -250,7 +250,7 @@ def main() -> int:
             path.write_text(text, encoding="utf-8")
 
     if args.json:
-        print(json.dumps({"updates": updates, "issues": issues}, indent=2))
+        print(json.dumps({"updates": updates, "issues": issues}, indent=2, ensure_ascii=False))
     else:
         if updates:
             print(f"{'PROJECT':<28} {'CURRENT':<32} {'NEW':<32} NOTE")
@@ -259,19 +259,19 @@ def main() -> int:
                 if item["image_version"]:
                     notes.append(f"IMAGE_VERSION -> {item['image_version']}")
                 if item["check_packages"]:
-                    notes.append("检查包版本兼容性")
+                    notes.append("check package version compatibility")
                 print(
                     f"{item['project']:<28} {item['current']:<32} "
                     f"{item['new']:<32} {'; '.join(notes)}"
                 )
         else:
-            print(f"按 {args.policy} 策略未发现可更新的基础镜像。")
+            print(f"No base image updates available under {args.policy} policy.")
         if issues:
-            print("\n跳过项：")
+            print("\nSkipped:")
             for issue in issues:
                 print(f"  - {issue}")
         if args.apply and updates:
-            print(f"\n已写入 {len(updates)} 处变更（未提交）。")
+            print(f"\nApplied {len(updates)} change(s) (not committed).")
 
     return 1 if args.fail_on_update and updates else 0
 

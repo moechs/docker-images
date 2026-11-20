@@ -31,9 +31,39 @@ jobs:
           UPDATES_FILE: ${{ runner.temp }}/updates.json
         run: |
           python3 scripts/update_base_images.py --policy patch --apply --json > "$UPDATES_FILE"
-          cat "$UPDATES_FILE" >> "$GITHUB_STEP_SUMMARY"
-          echo "Updated projects:"
-          jq -r '.updates[].project' "$UPDATES_FILE" | sort -u
+
+          {
+            echo "### Base image update check (patch)"
+            echo
+            count="$(jq '.updates | length' "$UPDATES_FILE")"
+            if [ "$count" -eq 0 ]; then
+              echo "No patch-level updates available."
+            else
+              echo "#### Updates ($count)"
+              echo
+              echo "| Project | Current | New | Note |"
+              echo "| --- | --- | --- | --- |"
+              jq -r '.updates[]
+                | [ .project,
+                    .current,
+                    .new,
+                    ([ if .image_version then "IMAGE_VERSION -> " + .image_version else empty end,
+                        if .check_packages then "check package compatibility" else empty end
+                      ] | join("; "))
+                  ]
+                | @tsv' "$UPDATES_FILE" |
+              while IFS=$'\t' read -r project current new note; do
+                echo "| ${project} | \`${current}\` | \`${new}\` | ${note} |"
+              done
+            fi
+            echo
+            issues="$(jq '.issues | length' "$UPDATES_FILE")"
+            if [ "$issues" -gt 0 ]; then
+              echo "#### Skipped ($issues)"
+              echo
+              jq -r '.issues[] | "- " + .' "$UPDATES_FILE"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate changes
         run: |
