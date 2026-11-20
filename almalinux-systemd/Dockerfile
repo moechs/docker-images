@@ -14,7 +14,7 @@ RUN dnf --allowerasing -y install \
       initscripts passwd sudo dumb-init \
       bind-utils iproute iputils net-tools nmap-ncat mtr traceroute \
       iptables-nft nftables tcpdump telnet curl wget \
-      atop dstat procps lsof strace ethtool dmidecode \
+      atop btop dstat procps lsof strace ethtool dmidecode \
       e2fsprogs util-linux file rsync coreutils-common inotify-tools \
       vim-enhanced git tig which python3.13-pip \
       bash-completion glibc-langpack-en gnupg2 hostname \
