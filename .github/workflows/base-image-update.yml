@@ -1,0 +1,62 @@
+name: base-image-update
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: check and apply patch updates
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check and apply base image updates
+        run: |
+          python3 scripts/update_base_images.py --policy patch --apply | tee "$GITHUB_STEP_SUMMARY"
+
+      - name: Validate changes
+        run: |
+          git diff --check
+
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet; then
+            echo "No base image updates available."
+            exit 0
+          fi
+
+          branch="chore/base-image-update"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add -A
+          git commit -m "chore: auto-update base images (patch)"
+          git push --force origin "$branch"
+
+          if gh pr view "$branch" --json number >/dev/null 2>&1; then
+            echo "PR for $branch already exists; branch has been refreshed."
+          else
+            gh pr create \
+              --base "${GITHUB_REF_NAME}" \
+              --head "$branch" \
+              --title "chore: auto-update base images (patch)" \
+              --body "Daily check found patch-level updates for upstream base images. Dockerfiles were updated automatically by \`scripts/update_base_images.py --policy patch\`. Please review package version compatibility before merging."
+          fi
