@@ -1,3 +1,6 @@
+ARG IMAGE_NAME=moechs/almalinux
+ARG IMAGE_VERSION=app
+
 FROM almalinux:9.9-20261116
 
 ENV LANG=en_US.UTF-8 \

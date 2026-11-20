@@ -1,0 +1,163 @@
+name: docker-build
+
+on:
+  workflow_call:
+    inputs:
+      context:
+        description: Image directory name without leading ./ or trailing /
+        type: string
+        required: true
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  config:
+    name: load config
+    runs-on: ubuntu-24.04
+    outputs:
+      image: ${{ steps.load.outputs.image }}
+      tag-prefix: ${{ steps.load.outputs.tag-prefix }}
+      cache-scope: ${{ steps.load.outputs.cache-scope }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: ${{ inputs.context }}
+
+      - name: Load image config
+        id: load
+        env:
+          CONTEXT: ${{ inputs.context }}
+        run: |
+          set -euo pipefail
+          dockerfile="./${CONTEXT}/Dockerfile"
+
+          read_arg() {
+            sed -nE "s/^ARG[[:space:]]+$1=[\"']?([^\"'[:space:]]+)[\"']?.*/\1/{p;q}" "$dockerfile"
+          }
+
+          image="$(read_arg IMAGE_NAME)"
+          tag_prefix="$(read_arg IMAGE_VERSION)"
+
+          if [ -z "$image" ] || [ -z "$tag_prefix" ]; then
+            echo "IMAGE_NAME or IMAGE_VERSION not found in ${dockerfile}" >&2
+            exit 1
+          fi
+
+          {
+            echo "image=${image}"
+            echo "tag-prefix=${tag_prefix}"
+            echo "cache-scope=${CONTEXT//\//-}"
+          } >> "$GITHUB_OUTPUT"
+
+  build:
+    name: build (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    needs:
+      - config
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "$GITHUB_ENV"
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ needs.config.outputs.image }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: ./${{ inputs.context }}/
+          provenance: false
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ needs.config.outputs.cache-scope }}-${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,scope=${{ needs.config.outputs.cache-scope }}-${{ env.PLATFORM_PAIR }},mode=max
+          outputs: type=image,name=${{ needs.config.outputs.image }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: merge manifest
+    runs-on: ubuntu-24.04
+    needs:
+      - config
+      - build
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ needs.config.outputs.image }}
+          tags: |
+            type=raw,value=${{ needs.config.outputs.tag-prefix }},enable={{is_default_branch}}
+            type=raw,value=${{ needs.config.outputs.tag-prefix }}-{{date 'YYYYMMDD' tz='Asia/Shanghai'}}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ needs.config.outputs.image }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ needs.config.outputs.image }}:${{ steps.meta.outputs.version }}
