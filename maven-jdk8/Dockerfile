@@ -3,12 +3,14 @@ ARG IMAGE_VERSION=3.10.1
 
 FROM moechs/jdk:8u511-20261117
 
+ARG IMAGE_VERSION
+
 ENV MAVEN_HOME=/usr/local/maven
 ENV PATH=/usr/local/maven/bin:/usr/java/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 USER root
 
-RUN dnf install -y maven openssh-clients git  \
+RUN dnf install -y maven-${IMAGE_VERSION} openssh-clients git  \
     && mkdir -p /app/.m2 \
     && chown -R app:app /app \
     && rm -rf /var/cache/dnf/* /var/log/dnf.* /tmp/*

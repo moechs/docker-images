@@ -3,9 +3,9 @@ ARG IMAGE_VERSION=2.7.7-r0
 
 FROM alpine:3.24.4
 
-ARG VERSION="2"
+ARG IMAGE_VERSION
 
-RUN apk add --no-cache bash grep gawk openvpn=~${VERSION}
+RUN apk add --no-cache bash grep gawk openvpn=~${IMAGE_VERSION}
 
 COPY entrypoint.sh /entrypoint.sh
 

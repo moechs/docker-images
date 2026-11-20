@@ -3,6 +3,8 @@ ARG IMAGE_VERSION=8u202
 
 FROM almalinux:9.9-20261116
 
+ARG IMAGE_VERSION
+
 ENV LANG=en_US.UTF-8 \
     TZ=Asia/Shanghai \
     PS1='\u@\h:\w$ ' \
@@ -25,7 +27,7 @@ RUN dnf update -y && \
        iproute net-tools tcpdump bind-utils gzip unzip wget tar less \
        libfaketime binutils freetype fontconfig wkhtmltox bc dumb-init \
        libpng libjpeg libX11 libXext libXrender xorg-x11-fonts-75dpi xorg-x11-fonts-Type1 \
-       dejavu-sans-fonts chinese-fonts procps-ng jdk arthas wireshark-cli \
+       dejavu-sans-fonts chinese-fonts procps-ng jdk-${IMAGE_VERSION} arthas wireshark-cli \
     && chmod +s /usr/sbin/tcpdump /usr/sbin/ss /usr/bin/netstat \
     && sed -e "s/#crypto.policy=unlimited/crypto.policy=unlimited/" -i /usr/java/default/jre/lib/security/java.security \
     && ln -sf /etc/pki/ca-trust/extracted/java/cacerts /usr/java/default/jre/lib/security/cacerts \
