@@ -13,6 +13,7 @@ RUN apt-get update \
     && useradd --uid 1000 --gid go --shell /bin/bash --create-home go \
     && mkdir -p /data /app/logs \
     && ln -sf /app/logs /data/logs \
-    && chown -R go:go /go /data /app
+    && chown -R go:go /go /data /app \
+    && rm -rf /var/lib/apt/lists/*
 
 USER go

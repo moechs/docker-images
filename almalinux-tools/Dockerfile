@@ -11,7 +11,6 @@ ENV LANG=en_US.UTF-8 \
 RUN dnf -y install epel-release \
     && /usr/bin/crb enable \
     && dnf config-manager --disable epel-cisco-openh264 \
-    && dnf upgrade -y \
     && dnf clean all \
     && rm -rf /var/cache/dnf /var/log/* /tmp/* /var/tmp/* ~/.cache/*
 

@@ -1,16 +1,12 @@
 ARG IMAGE_NAME=moechs/bitnami-postgresql-pgvector
 ARG IMAGE_VERSION=18.7.0
 
-ARG PGVECTOR_TAG=master
-ARG PG_VERSION=18.7.0-debian-12-r0
-FROM alpine/git:latest AS git
+FROM alpine/git:2.54.1 AS git
 
-ARG PGVECTOR_TAG
 WORKDIR /workspace
-RUN git clone --branch ${PGVECTOR_TAG} https://github.com/pgvector/pgvector.git
+RUN git clone --branch master https://github.com/pgvector/pgvector.git
 
-ARG PG_VERSION
-FROM moechs/bitnami-postgresql:${PG_VERSION}
+FROM moechs/bitnami-postgresql:18.7.0-debian-12-r0
 
 USER root
 COPY --from=git /workspace/pgvector /tmp/pgvector
