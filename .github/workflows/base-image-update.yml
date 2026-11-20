@@ -28,17 +28,20 @@ jobs:
 
       - name: Check and apply base image updates
         run: |
-          python3 scripts/update_base_images.py --policy patch --apply | tee "$GITHUB_STEP_SUMMARY"
+          python3 scripts/update_base_images.py --policy patch --apply --json > updates.json
+          cat updates.json >> "$GITHUB_STEP_SUMMARY"
+          echo "Updated projects:"
+          jq -r '.updates[].project' updates.json | sort -u
 
       - name: Validate changes
         run: |
           git diff --check
 
-      - name: Open pull request
+      - name: Commit and open pull request
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet; then
+          if [ "$(jq '.updates | length' updates.json)" -eq 0 ]; then
             echo "No base image updates available."
             exit 0
           fi
@@ -47,8 +50,22 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$branch"
-          git add -A
-          git commit -m "chore: auto-update base images (patch)"
+
+          jq -r '.updates
+            | group_by(.project)[]
+            | .[0].project as $project
+            | [ $project,
+                (map("bump \(.current | split(":")[0]) from \(.current | split(":")[1]) to \(.new | split(":")[1])") | join("; "))
+              ]
+            | @tsv' updates.json |
+          while IFS=$'\t' read -r project bumps; do
+            git add "$project/Dockerfile"
+            if git diff --cached --quiet; then
+              continue
+            fi
+            git commit -m "chore(deps): ${bumps} in ${project}"
+          done
+
           git push --force origin "$branch"
 
           if gh pr view "$branch" --json number >/dev/null 2>&1; then
@@ -57,6 +74,6 @@ jobs:
             gh pr create \
               --base "${GITHUB_REF_NAME}" \
               --head "$branch" \
-              --title "chore: auto-update base images (patch)" \
-              --body "Daily check found patch-level updates for upstream base images. Dockerfiles were updated automatically by \`scripts/update_base_images.py --policy patch\`. Please review package version compatibility before merging."
+              --title "chore(deps): automated patch updates for base images" \
+              --body "Daily check found patch-level updates for upstream base images. Each project was committed separately with a conventional commit message. Dockerfiles were updated automatically by \`scripts/update_base_images.py --policy patch\`. Please review package version compatibility before merging."
           fi
