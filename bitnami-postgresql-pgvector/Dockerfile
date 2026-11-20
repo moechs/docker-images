@@ -6,7 +6,7 @@ FROM alpine/git:2.54.1 AS git
 WORKDIR /workspace
 RUN git clone --branch master https://github.com/pgvector/pgvector.git
 
-FROM moechs/bitnami-postgresql:18.7.0-debian-12-r0
+FROM moechs/bitnami-postgresql:18.7.0-debian-12-r4
 
 USER root
 COPY --from=git /workspace/pgvector /tmp/pgvector
