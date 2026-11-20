@@ -1,17 +1,19 @@
 ARG IMAGE_NAME=moechs/nginx-auth-ldap
-ARG IMAGE_VERSION=1.31.8
+ARG IMAGE_VERSION=1.31.9
 
-FROM alpine:3.24.3
+FROM alpine:3.24.4
 
-ENV NGINX_VERSION=1.31.8 TZ=Asia/Shanghai
+ARG IMAGE_VERSION
+
+ENV TZ=Asia/Shanghai
 
 RUN cd /tmp && apk add --no-cache --virtual .build-deps \
   build-base git libtool wget tar \
   unzip pcre-dev zlib-dev openldap-dev openssl-dev \
   && apk add --no-cache bash pcre zlib openldap openssl \
-  && wget -q http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
-  && tar xf nginx-${NGINX_VERSION}.tar.gz \
-  && cd /tmp/nginx-${NGINX_VERSION} \
+  && wget -q http://nginx.org/download/nginx-${IMAGE_VERSION}.tar.gz \
+  && tar xf nginx-${IMAGE_VERSION}.tar.gz \
+  && cd /tmp/nginx-${IMAGE_VERSION} \
   && git clone https://github.com/kvspb/nginx-auth-ldap.git \
   && addgroup -g 601 www \
   && adduser -S -D -H -u 601 -h /var/lib/nginx -s /sbin/nologin -G www -g www www \
