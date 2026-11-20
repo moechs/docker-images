@@ -27,29 +27,42 @@ jobs:
           python-version: "3.12"
 
       - name: Check and apply base image updates
+        env:
+          UPDATES_FILE: ${{ runner.temp }}/updates.json
         run: |
-          python3 scripts/update_base_images.py --policy patch --apply --json > updates.json
-          cat updates.json >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/update_base_images.py --policy patch --apply --json > "$UPDATES_FILE"
+          cat "$UPDATES_FILE" >> "$GITHUB_STEP_SUMMARY"
           echo "Updated projects:"
-          jq -r '.updates[].project' updates.json | sort -u
+          jq -r '.updates[].project' "$UPDATES_FILE" | sort -u
 
       - name: Validate changes
         run: |
           git diff --check
+          for file in $(git diff --name-only | grep '/Dockerfile$' || true); do
+            grep -q '^ARG IMAGE_NAME=' "$file" || { echo "::error::missing ARG IMAGE_NAME in $file"; exit 1; }
+            grep -q '^ARG IMAGE_VERSION=' "$file" || { echo "::error::missing ARG IMAGE_VERSION in $file"; exit 1; }
+            grep -qE '^FROM [^[:space:]]+:[^[:space:]]+' "$file" || { echo "::error::unpinned FROM in $file"; exit 1; }
+          done
 
       - name: Commit and open pull request
         env:
           GH_TOKEN: ${{ github.token }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch || 'main' }}
+          UPDATES_FILE: ${{ runner.temp }}/updates.json
         run: |
-          if [ "$(jq '.updates | length' updates.json)" -eq 0 ]; then
+          if [ "$(jq '.updates | length' "$UPDATES_FILE")" -eq 0 ]; then
             echo "No base image updates available."
             exit 0
           fi
 
           branch="chore/base-image-update"
+          title="chore(deps): automated patch updates for base images"
+          body="Daily check found patch-level updates for upstream base images. Each project was committed separately with a conventional commit message. Dockerfiles were updated automatically by \`scripts/update_base_images.py --policy patch\`. Please review package version compatibility before merging."
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$branch"
+          start_sha="$(git rev-parse HEAD)"
 
           jq -r '.updates
             | group_by(.project)[]
@@ -57,7 +70,7 @@ jobs:
             | [ $project,
                 (map("bump \(.current | split(":")[0]) from \(.current | split(":")[1]) to \(.new | split(":")[1])") | join("; "))
               ]
-            | @tsv' updates.json |
+            | @tsv' "$UPDATES_FILE" |
           while IFS=$'\t' read -r project bumps; do
             git add "$project/Dockerfile"
             if git diff --cached --quiet; then
@@ -66,14 +79,21 @@ jobs:
             git commit -m "chore(deps): ${bumps} in ${project}"
           done
 
+          if [ "$(git rev-parse HEAD)" = "$start_sha" ]; then
+            echo "No Dockerfile changes to commit; skipping PR."
+            exit 0
+          fi
+
           git push --force origin "$branch"
 
-          if gh pr view "$branch" --json number >/dev/null 2>&1; then
-            echo "PR for $branch already exists; branch has been refreshed."
+          pr_number="$(gh pr list --head "$branch" --base "$BASE_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" --title "$title" --body "$body"
+            echo "PR #${pr_number} refreshed."
           else
             gh pr create \
-              --base "${GITHUB_REF_NAME}" \
+              --base "$BASE_BRANCH" \
               --head "$branch" \
-              --title "chore(deps): automated patch updates for base images" \
-              --body "Daily check found patch-level updates for upstream base images. Each project was committed separately with a conventional commit message. Dockerfiles were updated automatically by \`scripts/update_base_images.py --policy patch\`. Please review package version compatibility before merging."
+              --title "$title" \
+              --body "$body"
           fi
