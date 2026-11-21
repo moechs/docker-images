@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   update:
-    name: check and apply patch updates
+    name: check and apply base image updates
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -33,11 +33,11 @@ jobs:
           python3 scripts/update_base_images.py --policy patch --apply --json > "$UPDATES_FILE"
 
           {
-            echo "### Base image update check (patch)"
+            echo "### Base image update check"
             echo
             count="$(jq '.updates | length' "$UPDATES_FILE")"
             if [ "$count" -eq 0 ]; then
-              echo "No patch-level updates available."
+              echo "No base image updates available."
             else
               echo "#### Updates ($count)"
               echo
@@ -48,7 +48,8 @@ jobs:
                     .current,
                     .new,
                     ([ if .image_version then "IMAGE_VERSION -> " + .image_version else empty end,
-                        if .check_packages then "check package compatibility" else empty end
+                        if .check_packages then "check package compatibility" else empty end,
+                        if .rule and .rule != .policy then "rule=" + .rule else empty end
                       ] | join("; "))
                   ]
                 | @tsv' "$UPDATES_FILE" |
@@ -86,8 +87,8 @@ jobs:
           fi
 
           branch="chore/base-image-update"
-          title="chore(deps): automated patch updates for base images"
-          body="Daily check found patch-level updates for upstream base images. Each project was committed separately with a conventional commit message. Dockerfiles were updated automatically by \`scripts/update_base_images.py --policy patch\`. Please review package version compatibility before merging."
+          title="chore(deps): automated base image updates"
+          body="Automated base image updates. Full details: [workflow run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

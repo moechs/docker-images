@@ -5,6 +5,14 @@ Only FROM instructions are rewritten. Pinned package versions declared via
 ARG IMAGE_VERSION are left untouched, and a warning is printed for files
 whose packages may need re-checking after a base image bump.
 
+Tags shaped ``<x.y[-z]>-<qualifier>-v<a.b.c>`` are treated as upstream
+backport releases: the part before ``-v`` must stay identical and only the
+release after ``-v`` may increase, regardless of --policy.
+
+JSON updates keep ``policy`` as the requested CLI policy and add ``rule``
+(``backport`` or the requested policy) to show which comparator selected
+the update.
+
 Examples:
     python3 scripts/update_base_images.py                    # report only
     python3 scripts/update_base_images.py --policy minor     # allow minor bumps
@@ -53,6 +61,10 @@ FROM_RE = re.compile(r"^(FROM\s+)(?P<ref>[^\s#]+)(?P<rest>[^\n]*)$", re.I | re.M
 IMAGE_VERSION_RE = re.compile(r"^ARG IMAGE_VERSION=(.+)$", re.M)
 NUM_RE = re.compile(r"\d+")
 LINK_NEXT_RE = re.compile(r'<([^>]+)>;\s*rel="next"')
+BACKPORT_HEAD_RE = re.compile(
+    r"^\d+\.\d+(?:\.\d+)?-[A-Za-z0-9][A-Za-z0-9_.-]*$"
+)
+BACKPORT_RELEASE_RE = re.compile(r"^\d+\.\d+\.\d+$")
 
 
 @dataclass
@@ -120,6 +132,29 @@ def is_candidate(current: str, candidate: str, policy: str) -> bool:
     if policy == "minor":
         return len(cur) < 2 or new[0] == cur[0]
     return True
+
+
+def split_backport(tag: str) -> tuple[str, tuple[int, ...]] | None:
+    """Split ``7.4-fpm-v0.4.0`` into ``('7.4-fpm', (0, 4, 0))``."""
+    head, sep, release = tag.rpartition("-v")
+    if (
+        not sep
+        or not BACKPORT_HEAD_RE.fullmatch(head)
+        or not BACKPORT_RELEASE_RE.fullmatch(release)
+    ):
+        return None
+    return head, tuple(int(part) for part in release.split("."))
+
+
+def backport_candidate(current: str, candidate: str) -> bool | None:
+    """Return None when not a backport tag, otherwise whether candidate wins."""
+    cur = split_backport(current)
+    if cur is None:
+        return None
+    new = split_backport(candidate)
+    if new is None or cur[0] != new[0]:
+        return False
+    return new[1] > cur[1]
 
 
 def resolve_repo(image: str) -> str:
@@ -209,16 +244,34 @@ def main() -> int:
             continue
         for ref in group:
             newest = None
+            rule_used = args.policy
             for tag in tags:
-                if is_candidate(ref.tag, tag, args.policy):
-                    if newest is None or numbers(tag) > numbers(newest):
-                        newest = tag
+                verdict = backport_candidate(ref.tag, tag)
+                if verdict is not None:
+                    ok = verdict
+                    rule = "backport"
+                else:
+                    ok = is_candidate(ref.tag, tag, args.policy)
+                    rule = args.policy
+                if ok and (newest is None or numbers(tag) > numbers(newest)):
+                    newest = tag
+                    rule_used = rule
             if newest:
                 # Keep IMAGE_VERSION in sync only when it mirrors the base tag
                 # (e.g. node:26.13.1 / IMAGE_VERSION=26.13.1), not when it is
                 # an application version (e.g. ansible 7.7.0 on almalinux).
+                # Backport-shaped tags are fixed identities (e.g. 7.4.33), so
+                # their IMAGE_VERSION must never be rewritten.
                 synced_version = None
-                if ref.image_version and numbers(ref.image_version) == numbers(ref.tag):
+                is_backport = (
+                    split_backport(ref.tag) is not None
+                    or split_backport(newest) is not None
+                )
+                if (
+                    not is_backport
+                    and ref.image_version
+                    and numbers(ref.image_version) == numbers(ref.tag)
+                ):
                     synced_version = version_part(newest)
                 updates.append(
                     {
@@ -227,6 +280,7 @@ def main() -> int:
                         "current": ref.old,
                         "new": f"{ref.image}:{newest}",
                         "policy": args.policy,
+                        "rule": rule_used,
                         "check_packages": ref.pinned_package,
                         "image_version": synced_version,
                     }
